@@ -340,9 +340,7 @@ class TestStockfish:
         stockfish.set_turn_perspective()
         assert stockfish.get_evaluation() == {"type": "mate", "value": 2}
         assert stockfish.will_move_be_a_capture("f1h1") is Capture.NO_CAPTURE
-        assert (
-            stockfish.will_move_be_a_capture("f1e1") is Capture.DIRECT_CAPTURE
-        )
+        assert stockfish.will_move_be_a_capture("f1e1") is Capture.DIRECT_CAPTURE
         stockfish.update_engine_parameters({"UCI_Chess960": False})
         assert stockfish.get_engine_parameters() == old_parameters
         assert stockfish.get_best_move() == "f1g1"
