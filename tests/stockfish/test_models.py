@@ -4,6 +4,7 @@ import time
 from typing import List, Optional, Dict
 
 from stockfish import Stockfish, StockfishException
+from stockfish.types import Piece, Capture, BenchmarkParameters
 
 
 class TestStockfish:
@@ -338,10 +339,8 @@ class TestStockfish:
         assert stockfish.get_evaluation() == {"type": "mate", "value": 2}
         stockfish.set_turn_perspective()
         assert stockfish.get_evaluation() == {"type": "mate", "value": 2}
-        assert stockfish.will_move_be_a_capture("f1h1") is Stockfish.Capture.NO_CAPTURE
-        assert (
-            stockfish.will_move_be_a_capture("f1e1") is Stockfish.Capture.DIRECT_CAPTURE
-        )
+        assert stockfish.will_move_be_a_capture("f1h1") is Capture.NO_CAPTURE
+        assert stockfish.will_move_be_a_capture("f1e1") is Capture.DIRECT_CAPTURE
         stockfish.update_engine_parameters({"UCI_Chess960": False})
         assert stockfish.get_engine_parameters() == old_parameters
         assert stockfish.get_best_move() == "f1g1"
@@ -349,7 +348,7 @@ class TestStockfish:
         assert stockfish.get_evaluation() == {"type": "mate", "value": 2}
         stockfish.set_turn_perspective()
         assert stockfish.get_evaluation() == {"type": "mate", "value": 2}
-        assert stockfish.will_move_be_a_capture("f1g1") is Stockfish.Capture.NO_CAPTURE
+        assert stockfish.will_move_be_a_capture("f1g1") is Capture.NO_CAPTURE
 
     def test_get_board_visual_white(self, stockfish: Stockfish):
         stockfish.set_position(["e2e4", "e7e6", "d2d4", "d7d5"])
@@ -936,14 +935,14 @@ class TestStockfish:
 
     @pytest.mark.slow
     def test_benchmark_result_with_defaults(self, stockfish: Stockfish):
-        params = stockfish.BenchmarkParameters()
+        params = BenchmarkParameters()
         result = stockfish.benchmark(params)
         # result should contain the last line of a successful method call
         assert result.split(" ")[0] == "Nodes/second"
 
     @pytest.mark.slow
     def test_benchmark_result_with_valid_options(self, stockfish: Stockfish):
-        params = stockfish.BenchmarkParameters(
+        params = BenchmarkParameters(
             ttSize=64, threads=2, limit=1000, limitType="movetime", evalType="classical"
         )
         result = stockfish.benchmark(params)
@@ -952,7 +951,7 @@ class TestStockfish:
 
     @pytest.mark.slow
     def test_benchmark_result_with_invalid_options(self, stockfish: Stockfish):
-        params = stockfish.BenchmarkParameters(
+        params = BenchmarkParameters(
             ttSize=2049,
             threads=0,
             limit=0,
@@ -1010,14 +1009,14 @@ class TestStockfish:
             "rnbq1rk1/ppp1ppbp/5np1/3pP3/8/BPN5/P1PP1PPP/R2QKBNR w KQ d6 0 6"
         )
         # fmt: off
-        squares_and_contents: Dict[str, Optional[Stockfish.Piece]] = {
-            "a1": Stockfish.Piece.WHITE_ROOK, "a8": Stockfish.Piece.BLACK_ROOK,
-            "g8": Stockfish.Piece.BLACK_KING, "e1": Stockfish.Piece.WHITE_KING,
-            "h2": Stockfish.Piece.WHITE_PAWN, "f8": Stockfish.Piece.BLACK_ROOK,
-            "d6": None, "h7": Stockfish.Piece.BLACK_PAWN, "c3": Stockfish.Piece.WHITE_KNIGHT,
-            "a3": Stockfish.Piece.WHITE_BISHOP, "h8": None, "d1": Stockfish.Piece.WHITE_QUEEN,
-            "d4": None, "f6": Stockfish.Piece.BLACK_KNIGHT, "g7": Stockfish.Piece.BLACK_BISHOP,
-            "d8": Stockfish.Piece.BLACK_QUEEN,
+        squares_and_contents: Dict[str, Optional[Piece]] = {
+            "a1": Piece.WHITE_ROOK, "a8": Piece.BLACK_ROOK,
+            "g8": Piece.BLACK_KING, "e1": Piece.WHITE_KING,
+            "h2": Piece.WHITE_PAWN, "f8": Piece.BLACK_ROOK,
+            "d6": None, "h7": Piece.BLACK_PAWN, "c3": Piece.WHITE_KNIGHT,
+            "a3": Piece.WHITE_BISHOP, "h8": None, "d1": Piece.WHITE_QUEEN,
+            "d4": None, "f6": Piece.BLACK_KNIGHT, "g7": Piece.BLACK_BISHOP,
+            "d8": Piece.BLACK_QUEEN,
         }
         # fmt: on
         for notation, piece in squares_and_contents.items():
@@ -1051,55 +1050,55 @@ class TestStockfish:
         )
         c3d5_result = stockfish.will_move_be_a_capture("c3d5")
         assert (
-            c3d5_result is Stockfish.Capture.DIRECT_CAPTURE
+            c3d5_result is Capture.DIRECT_CAPTURE
             and c3d5_result.name == "DIRECT_CAPTURE"
             and c3d5_result.value == "direct capture"
         )
         e5d6_result = stockfish.will_move_be_a_capture("e5d6")
         assert (
-            e5d6_result is Stockfish.Capture.EN_PASSANT
+            e5d6_result is Capture.EN_PASSANT
             and e5d6_result.name == "EN_PASSANT"
             and e5d6_result.value == "en passant"
         )
         f1e2_result = stockfish.will_move_be_a_capture("f1e2")
         assert (
-            f1e2_result is Stockfish.Capture.NO_CAPTURE
+            f1e2_result is Capture.NO_CAPTURE
             and f1e2_result.name == "NO_CAPTURE"
             and f1e2_result.value == "no capture"
         )
         e5f6_result = stockfish.will_move_be_a_capture("e5f6")
         assert (
-            e5f6_result is Stockfish.Capture.DIRECT_CAPTURE
+            e5f6_result is Capture.DIRECT_CAPTURE
             and e5f6_result.name == "DIRECT_CAPTURE"
             and e5f6_result.value == "direct capture"
         )
         a3d6_result = stockfish.will_move_be_a_capture("a3d6")
         assert (
-            a3d6_result is Stockfish.Capture.NO_CAPTURE
+            a3d6_result is Capture.NO_CAPTURE
             and a3d6_result.name == "NO_CAPTURE"
             and a3d6_result.value == "no capture"
         )
         a7a8q_result = stockfish.will_move_be_a_capture("a7a8q")
         assert (
-            a7a8q_result is Stockfish.Capture.NO_CAPTURE
+            a7a8q_result is Capture.NO_CAPTURE
             and a7a8q_result.name == "NO_CAPTURE"
             and a7a8q_result.value == "no capture"
         )
         a7a8b_result = stockfish.will_move_be_a_capture("a7a8b")
         assert (
-            a7a8b_result is Stockfish.Capture.NO_CAPTURE
+            a7a8b_result is Capture.NO_CAPTURE
             and a7a8b_result.name == "NO_CAPTURE"
             and a7a8b_result.value == "no capture"
         )
         a7b8q_result = stockfish.will_move_be_a_capture("a7b8q")
         assert (
-            a7b8q_result is Stockfish.Capture.DIRECT_CAPTURE
+            a7b8q_result is Capture.DIRECT_CAPTURE
             and a7b8q_result.name == "DIRECT_CAPTURE"
             and a7b8q_result.value == "direct capture"
         )
         a7b8r_result = stockfish.will_move_be_a_capture("a7b8r")
         assert (
-            a7b8r_result is Stockfish.Capture.DIRECT_CAPTURE
+            a7b8r_result is Capture.DIRECT_CAPTURE
             and a7b8r_result.name == "DIRECT_CAPTURE"
             and a7b8r_result.value == "direct capture"
         )
