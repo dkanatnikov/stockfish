@@ -1,27 +1,18 @@
 # Stockfish
 
-> [!NOTE]
-> This section refers to the technical application. If you are looking for information regarding the status of this project and the original repo, please look [here](https://github.com/py-stockfish/stockfish/tree/master#status-of-the-project).
+> This is not an official repository of Stockfish for Python.
+> [Original one](https://github.com/zhelyabuzhsky/stockfish) is frozen now.
+> If you are looking for information regarding the status of this project and the original repo, please look [here](https://github.com/py-stockfish/stockfish/tree/master#status-of-the-project).
+> 
+> New official repo could be found [here](https://github.com/py-stockfish/stockfish). However, as I see, it is slow paced a little.
 
 Implements an easy-to-use Stockfish class to integrates the Stockfish chess engine with Python.
 
 ## Install
 
-```bash
-$ pip install stockfish
-```
+This version can be installed from the source code only.
 
-#### Ubuntu
-
-```bash
-$ sudo apt install stockfish
-```
-
-#### Mac OS
-
-```bash
-$ brew install stockfish
-```
+# Everything below is forked part
 
 ## API Documentation
 
