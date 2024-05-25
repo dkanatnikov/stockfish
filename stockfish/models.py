@@ -9,13 +9,11 @@ from __future__ import annotations
 import subprocess
 from typing import Any, List, Optional, Union, Dict, Tuple
 import copy
-import os
-from dataclasses import dataclass
 import re
 import datetime
 import warnings
 
-from stockfish.types import Piece, Capture
+from stockfish.types import Piece, Capture, BenchmarkParameters
 
 
 class Stockfish:
@@ -1212,42 +1210,13 @@ class Stockfish:
         Stockfish._del_counter += 1
         self.send_quit_command()
 
-    @dataclass
-    class BenchmarkParameters:
-        ttSize: int = 16
-        threads: int = 1
-        limit: int = 13
-        fenFile: str = "default"
-        limitType: str = "depth"
-        evalType: str = "mixed"
-
-        def __post_init__(self):
-            self.ttSize = self.ttSize if self.ttSize in range(1, 128001) else 16
-            self.threads = self.threads if self.threads in range(1, 513) else 1
-            self.limit = self.limit if self.limit in range(1, 10001) else 13
-            self.fenFile = (
-                self.fenFile
-                if self.fenFile.endswith(".fen") and os.path.isfile(self.fenFile)
-                else "default"
-            )
-            self.limitType = (
-                self.limitType
-                if self.limitType in ["depth", "perft", "nodes", "movetime"]
-                else "depth"
-            )
-            self.evalType = (
-                self.evalType
-                if self.evalType in ["mixed", "classical", "NNUE"]
-                else "mixed"
-            )
-
     def benchmark(self, params: BenchmarkParameters) -> str:
         """Benchmark will run the bench command with BenchmarkParameters.
         It is an Additional custom non-UCI command, mainly for debugging.
         Do not use this command during a search!
         """
-        if type(params) != self.BenchmarkParameters:
-            params = self.BenchmarkParameters()
+        if isinstance(params, BenchmarkParameters):
+            params = BenchmarkParameters()
 
         self._put(
             f"bench {params.ttSize} {params.threads} {params.limit} {params.fenFile} {params.limitType} {params.evalType}"
